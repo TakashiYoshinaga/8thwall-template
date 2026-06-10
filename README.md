@@ -1,61 +1,64 @@
 # WebAR Image Tracking
 
-8th Wall エンジン（オープンソース版）を使ったイメージトラッキング WebAR。
+MIT ライセンスで公開された 8th Wall Engine を使う、最小構成の Image Tracking サンプルです。
+検出した平面ターゲットの上に Three.js のキューブを表示します。
 
-## セットアップ手順
+## 実行
 
-### 1. ターゲット画像を処理する
+静的 HTTP サーバーでプロジェクトルートを配信します。
 
-Node.js が必要です。プロジェクトルートで以下を実行します。
+```bash
+python3 -m http.server 8000
+```
+
+PC では `http://localhost:8000` を開きます。スマートフォンでカメラを使う場合は HTTPS
+で配信してください。
+
+## ターゲット画像
+
+Node.js を用意し、プロジェクトルートで Image Target CLI を実行します。
 
 ```bash
 npx @8thwall/image-target-cli@latest
 ```
 
-対話形式の質問にこう答えます：
+現在のサンプルは `image-targets/my-target.json` を読み込みます。別の名前で生成した場合は
+`js/app.js` の `TARGET_JSON` を変更してください。JSON と CLI が生成する画像ファイルは、
+相対パスを保ったまま一緒に配信します。
 
-| 質問 | 入力値 |
-|------|--------|
-| 画像ファイルのパス | `./image-targets/marker.png` |
-| トリミング | Enter（デフォルトで OK） |
-| 出力フォルダ | `image-targets` |
-| ターゲット名 | `my-target` |
-| ジオメトリタイプ | `flat` |
+## MIT 版エンジン
 
-成功すると `image-targets/` に以下のファイルが追加されます：
+このリポジトリは Distributed Engine Binary と `@8thwall/engine-binary` を使用しません。
+`external/xr/` の成果物は、次の MIT ライセンス版ソースからビルドしたものです。
 
-```
-image-targets/
-├── my-target.json             ← XR8 に渡すメタデータ
-├── my-target_original.png     ← 元画像のコピー
-├── my-target_cropped.png      ← クロップ済み
-├── my-target_thumbnail.png    ← サムネイル
-└── my-target_luminance.png    ← 輝度画像（特徴点抽出用）
-```
+- Source: <https://github.com/8thwall/8thwall>
+- Commit: `462ea2f73accb9ecd1bb629d9877300438ba718f`
+- Bazel: `7.2.1`
+- Config: `wasmreleasesimd`
 
-これらのファイルはすべてリポジトリに含めてください。
+公式の bundle ターゲットをビルドします。
 
-### 2. ターゲット名を合わせる
-
-`js/app.js` の先頭行を変更します。
-
-```js
-const TARGET_JSON = 'image-targets/my-target.json'  // ← CLI で指定した名前に合わせる
+```bash
+git clone https://github.com/8thwall/8thwall.git
+cd 8thwall
+git checkout 462ea2f73accb9ecd1bb629d9877300438ba718f
+python3 -m pip install -r requirements.txt
+npx --yes @bazel/bazelisk build --config=wasmreleasesimd //reality/app/xr/js:bundle
 ```
 
-### 3. ローカルで確認（PC・Chrome）
+`bazel-bin/reality/app/xr/js/bundle.zip` から `xr.js` と `xr-tracking.js` だけを取り出し、
+ソースの `resources/powered-by.svg`、`LICENSE` とともに `external/xr/` へ配置します。
+Face・Sky・Media Recorder などの未使用成果物は同梱しません。
 
-VSCode の Live Server 拡張でルートを開きます。`http://localhost:5500` を Chrome で開くとカメラが使えます（localhost は HTTPS 不要）。
+`data-preload-chunks="slam"` は互換チャンク名で、ローカルの `xr-tracking.js` を読み込む
+ために必要です。
 
-### 4. スマートフォンで確認
-
-Netlify 等にデプロイします（HTTPS 必須）。
-
-- ビルドコマンド: なし
-- 公開ディレクトリ: `/`
+固定コミットでは `XrController.configure()` が `disableWorldTracking` を反映しないため、
+Image Tracking 専用モードを有効にする最小パッチを適用して `xr-tracking.js` を再ビルド
+しています。差分は `external/xr/BUILD-SOURCE.md` に記載しています。
 
 ## 技術スタック
 
-- 8th Wall Engine Binary v1（CDN）
+- 8th Wall Engine（MIT 版、リポジトリ内に同梱）
 - Three.js r128（CDN）
-- バニラ JavaScript（TypeScript なし・ビルドステップなし）
+- バニラ JavaScript
