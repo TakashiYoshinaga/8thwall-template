@@ -4,6 +4,7 @@ const TARGET_JSON = 'image-targets/my-target.json'
   let targetAnchor = null
   let cube = null
   const statusEl = document.getElementById('status')
+  const canvas = document.getElementById('canvas')
 
   function showError(error) {
     const message = error && error.message ? error.message : String(error)
@@ -23,6 +24,32 @@ const TARGET_JSON = 'image-targets/my-target.json'
     targetAnchor.visible = true
     cube.scale.setScalar(cubeSize)
     cube.position.z = cubeSize / 2
+  }
+
+  function syncCanvasSize() {
+    const width = window.innerWidth
+    const height = window.innerHeight
+
+    if (canvas.width === width && canvas.height === height) return
+
+    canvas.width = width
+    canvas.height = height
+  }
+
+  const fullWindowCanvasModule = {
+    name: 'full-window-canvas',
+    onAttach: () => {
+      syncCanvasSize()
+      window.addEventListener('resize', syncCanvasSize)
+      window.visualViewport?.addEventListener('resize', syncCanvasSize)
+    },
+    onDeviceOrientationChange: () => {
+      window.requestAnimationFrame(syncCanvasSize)
+    },
+    onDetach: () => {
+      window.removeEventListener('resize', syncCanvasSize)
+      window.visualViewport?.removeEventListener('resize', syncCanvasSize)
+    },
   }
 
   const imageTrackingModule = {
@@ -106,6 +133,7 @@ const TARGET_JSON = 'image-targets/my-target.json'
       })
 
       XR8.addCameraPipelineModules([
+        fullWindowCanvasModule,
         XR8.GlTextureRenderer.pipelineModule(),
         XR8.Threejs.pipelineModule(),
         XR8.XrController.pipelineModule(),
@@ -113,8 +141,9 @@ const TARGET_JSON = 'image-targets/my-target.json'
       ])
 
       statusEl.textContent = 'カメラを起動中...'
+      syncCanvasSize()
       XR8.run({
-        canvas: document.getElementById('canvas'),
+        canvas,
         allowedDevices: XR8.XrConfig.device().ANY,
       })
     } catch (error) {

@@ -55,7 +55,9 @@ Face・Sky・Media Recorder などの未使用成果物は同梱しません。
 
 固定コミットでは `XrController.configure()` が `disableWorldTracking` を反映しないため、
 Image Tracking 専用モードを有効にする最小パッチを適用して `xr-tracking.js` を再ビルド
-しています。差分は `external/xr/BUILD-SOURCE.md` に記載しています。
+しています。本来は呼び出し側の `configure({disableWorldTracking: true})` だけで完結する
+設定ですが、このコミットでは設定を受け取る処理が欠落しています。差分は
+`external/xr/BUILD-SOURCE.md` に記載しています。
 
 ## 技術スタック
 
