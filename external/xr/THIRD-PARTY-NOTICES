@@ -1,0 +1,378 @@
+THIRD-PARTY NOTICES
+===================
+
+This directory ships two prebuilt JavaScript bundles, xr.js and xr-tracking.js.
+They were produced by building the 8th Wall Engine from source:
+
+    https://github.com/8thwall/8thwall
+    commit 462ea2f73accb9ecd1bb629d9877300438ba718f
+
+The 8th Wall Engine itself is licensed under the MIT License. Its copyright
+and permission notice is in the LICENSE file alongside this one. Build
+provenance and the local patch applied before building are documented in
+BUILD-SOURCE.md.
+
+The bundles additionally contain the third-party components listed below,
+which were compiled in at build time. Their copyright notices and license
+terms follow.
+
+Contents
+--------
+  1. 51Degrees Renderer                 Mozilla Public License 2.0
+  2. capnp-ts                           MIT
+  3. debug                              MIT
+  4. ms                                 MIT
+  5. format                             MIT
+  6. tslib                              0BSD (BSD Zero Clause License)
+  7. ua-parser-js                       MIT
+  8. uuid                               MIT
+  9. Emscripten runtime support code    MIT / University of Illinois NCSA
+
+
+--------------------------------------------------------------------------
+1. 51Degrees Renderer  --  Mozilla Public License 2.0
+--------------------------------------------------------------------------
+
+Version   : 1.657942 (published 2023-10-05)
+Copyright : Copyright 2022 51 Degrees Mobile Experts Limited, Davidson House,
+            Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU
+Upstream  : https://github.com/51Degrees/Renderer  (renderer.js)
+As vendored in the 8th Wall source tree:
+            https://github.com/8thwall/8thwall/blob/462ea2f73accb9ecd1bb629d9877300438ba718f/
+              reality/app/xr/js/src/devices/getRenderer.js
+            (retrieval script: .../src/devices/pull-51degree-getRenderer.sh)
+
+License text:
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. A copy of the MPL v2.0 can be obtained at:
+
+        https://mozilla.org/MPL/2.0/
+
+    This Source Code Form is "Incompatible With Secondary Licenses", as
+    defined by the Mozilla Public License, v. 2.0.
+
+Availability of the Source Code Form (MPL-2.0 Section 3.2):
+
+    The component is distributed here in Executable Form only (minified
+    inside xr.js and xr-tracking.js). Its Source Code Form is available
+    at the two URLs given above. The component is unmodified; the only
+    additions made by 8th Wall are a `const maxRetries = 1` declaration
+    and an ES module export statement, both of which appear verbatim in
+    the retrieval script named above.
+
+    The notice reproduced above is also preserved inline in both
+    bundles, immediately before the component's code.
+
+
+--------------------------------------------------------------------------
+2. capnp-ts  --  MIT
+--------------------------------------------------------------------------
+
+Version   : 0.2.4
+Upstream  : https://github.com/jdiaz5513/capnp-ts
+
+License text:
+
+    MIT License
+
+    Copyright (c) 2017 Julián Díaz (jdiaz5513)
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+--------------------------------------------------------------------------
+3. debug  --  MIT
+--------------------------------------------------------------------------
+
+Version   : 2.6.9  (dependency of capnp-ts)
+Upstream  : https://github.com/debug-js/debug
+
+License text:
+
+    (The MIT License)
+
+    Copyright (c) 2014 TJ Holowaychuk <tj@vision-media.ca>
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+    and associated documentation files (the 'Software'), to deal in the Software without restriction,
+    including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+    and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+    subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial
+    portions of the Software.
+
+    THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+    LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+--------------------------------------------------------------------------
+4. ms  --  MIT
+--------------------------------------------------------------------------
+
+Version   : 2.0.0  (dependency of debug)
+Upstream  : https://github.com/vercel/ms
+
+License text:
+
+    The MIT License (MIT)
+
+    Copyright (c) 2016 Zeit, Inc.
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+
+--------------------------------------------------------------------------
+5. format  --  MIT
+--------------------------------------------------------------------------
+
+Version   : 0.2.2  (dependency of capnp-ts)
+Upstream  : https://github.com/samsonjs/format
+
+License text:
+
+     The MIT License (MIT)
+
+    Copyright © 2010-2016 Sami Samhuri, https://samhuri.net <sami@samhuri.net>
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+--------------------------------------------------------------------------
+6. tslib  --  0BSD (BSD Zero Clause License)
+--------------------------------------------------------------------------
+
+Version   : 1.14.1  (dependency of capnp-ts)
+Upstream  : https://github.com/microsoft/tslib
+Note      : 0BSD does not require retention of this notice. It is
+            reproduced here for completeness.
+
+License text:
+
+    Copyright (c) Microsoft Corporation.
+
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted.
+
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+    REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+    LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+    OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+    PERFORMANCE OF THIS SOFTWARE.
+
+
+--------------------------------------------------------------------------
+7. ua-parser-js  --  MIT
+--------------------------------------------------------------------------
+
+Version   : 2.0.0-alpha.2, from the fork pinned at commit
+            46379495762d2db94463ad0781c8a2bce5e3cef8
+Upstream  : https://github.com/8thwall/ua-parser-js
+            (fork of https://github.com/faisalman/ua-parser-js)
+Note      : Later upstream releases of ua-parser-js (v2.0.0 final and
+            onward) are licensed AGPL-3.0. The commit pinned above is
+            MIT, per its package.json and license.md.
+
+License text:
+
+    MIT License
+
+    Copyright (c) 2012-2023 Faisal Salman <<f@faisalman.com>>
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+
+--------------------------------------------------------------------------
+8. uuid  --  MIT
+--------------------------------------------------------------------------
+
+Version   : 3.4.0
+Upstream  : https://github.com/uuidjs/uuid
+
+License text:
+
+    The MIT License (MIT)
+
+    Copyright (c) 2010-2016 Robert Kieffer and other contributors
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+
+--------------------------------------------------------------------------
+9. Emscripten runtime support code  --  MIT / University of Illinois NCSA
+--------------------------------------------------------------------------
+
+Upstream  : https://github.com/emscripten-core/emscripten
+Note      : Emscripten-generated runtime glue is linked into
+            xr-tracking.js as part of the WebAssembly build.
+
+License text:
+
+    Emscripten is available under 2 licenses, the MIT license and the
+    University of Illinois/NCSA Open Source License.
+
+    Both are permissive open source licenses, with little if any
+    practical difference between them.
+
+    The reason for offering both is that (1) the MIT license is
+    well-known, while (2) the University of Illinois/NCSA Open Source
+    License allows Emscripten's code to be integrated upstream into
+    LLVM, which uses that license, should the opportunity arise.
+
+    The full text of both licenses follows.
+
+    ==============================================================================
+
+    Copyright (c) 2010-2014 Emscripten authors, see AUTHORS file.
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+
+    ==============================================================================
+
+    Copyright (c) 2010-2014 Emscripten authors, see AUTHORS file.
+    All rights reserved.
+
+    Permission is hereby granted, free of charge, to any person obtaining a
+    copy of this software and associated documentation files (the
+    "Software"), to deal with the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to
+    the following conditions:
+
+        Redistributions of source code must retain the above copyright
+        notice, this list of conditions and the following disclaimers.
+
+        Redistributions in binary form must reproduce the above
+        copyright notice, this list of conditions and the following disclaimers
+        in the documentation and/or other materials provided with the
+        distribution.
+
+        Neither the names of Mozilla,
+        nor the names of its contributors may be used to endorse
+        or promote products derived from this Software without specific prior
+        written permission.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+    ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS WITH THE SOFTWARE.
+
+    ==============================================================================
+
+    This program uses portions of Node.js source code located in src/library_path.js,
+    in accordance with the terms of the MIT license. Node's license follows:
+
+        """
+            Copyright Joyent, Inc. and other Node contributors. All rights reserved.
+            Permission is hereby granted, free of charge, to any person obtaining a copy
+            of this software and associated documentation files (the "Software"), to
+            deal in the Software without restriction, including without limitation the
+            rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+            sell copies of the Software, and to permit persons to whom the Software is
+            furnished to do so, subject to the following conditions:
+
+            The above copyright notice and this permission notice shall be included in
+            all copies or substantial portions of the Software.
+
+            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+            FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+            IN THE SOFTWARE.
+        """
+
+    The musl libc project is bundled in this repo, and it has the MIT license, see
+    system/lib/libc/musl/COPYRIGHT
+
+    The third_party/ subdirectory contains code with other licenses. None of it is
+    used by default, but certain options use it (e.g., the optional closure compiler
+    flag will run closure compiler from third_party/).
+
+
+--------------------------------------------------------------------------
+End of third-party notices.
+--------------------------------------------------------------------------

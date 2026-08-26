@@ -59,6 +59,20 @@ Image Tracking 専用モードを有効にする最小パッチを適用して `
 設定ですが、このコミットでは設定を受け取る処理が欠落しています。差分は
 `external/xr/BUILD-SOURCE.md` に記載しています。
 
+## 配布時のライセンス表示
+
+`external/xr/` を配信する際は、次の 2 ファイルを必ず一緒に配置してください。バンドル
+自体には著作権バナーが含まれないため、この 2 ファイルが唯一の告知手段になります。
+
+- `external/xr/LICENSE` — 8th Wall Engine 本体（MIT）
+- `external/xr/THIRD-PARTY-NOTICES` — バンドルに組み込まれたサードパーティ 9 件
+
+サードパーティのうち 51Degrees Renderer は MPL-2.0 です。未改変のため、ソース入手先を
+明示する以外の義務はなく、告知文は `THIRD-PARTY-NOTICES` に記載済みです。
+
+「8th Wall」の名称やロゴを表示する場合は、MIT が商標権を含まないため
+<https://8thwall.org/docs/open-source> のガイドラインを確認してください。
+
 ## 技術スタック
 
 - 8th Wall Engine（MIT 版、リポジトリ内に同梱）
