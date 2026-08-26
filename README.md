@@ -1,69 +1,152 @@
 # WebAR Image Tracking
 
-MIT ライセンスで公開された 8th Wall Engine を使う、最小構成の Image Tracking サンプルです。
+MIT ライセンス版 8th Wall Engine だけで動く、最小構成の Image Tracking サンプルです。
 検出した平面ターゲットの上に Three.js のキューブを表示します。
 
-## 実行
+## このリポジトリについて
 
-静的 HTTP サーバーでプロジェクトルートを配信します。
+8th Wall は 2026 年にエンジン本体を MIT ライセンスで公開しましたが、SLAM などの一部機能は
+プロプライエタリなバイナリとして別配布されています。このリポジトリは**その非 MIT 部分を
+一切使わず、MIT ソースをビルドした成果物のみで Image Tracking を成立させた構成**です。
 
-```bash
-python3 -m http.server 8000
-```
+- Distributed Engine Binary（`@8thwall/engine-binary`）を使いません
+- CDN からエンジンを読み込みません。`external/xr/` に同梱したものだけを使います
+- エンジンに関しては外部サービスへの依存がゼロです（ただし Three.js は CDN から読み込んで
+  いるため、完全にオフラインで動かすには Three.js もローカルに配置してください）
 
-PC では `http://localhost:8000` を開きます。スマートフォンでカメラを使う場合は HTTPS
-で配信してください。
+### できること・できないこと
+
+| 機能 | 状態 |
+|---|---|
+| Image Target（マーカー）トラッキング | 動作します |
+| World Tracking / SLAM | 使えません。MIT ソースから削除済みで、非 MIT バイナリが必要です |
+| Face Effects / Sky Effects / 録画 | エンジン内にコードはありますが成果物を同梱していません（下記参照） |
+| VPS / Hand Tracking | 非 MIT バイナリにも含まれません |
+
+SLAM が無いため、`js/app.js` では `configure({disableWorldTracking: true})` が必須です。
+
+Face・Sky・Media Recorder は、同じビルドの `bundle.zip` から不足ファイル 9 件をコピーすれば
+有効化できます（`xr-face.js`、`.tflite` モデル、各ワーカー等）。ライセンス上の追加制約は
+ありません。
+
+## クイックスタート
+
+1. 静的 HTTP サーバーでプロジェクトルートを配信します。
+
+   ```bash
+   python3 -m http.server 8000
+   ```
+
+2. PC では `http://localhost:8000` を開きます。
+
+3. カメラを許可したら、`image-targets/marker.png` を印刷するか別の画面に表示して、
+   カメラを向けてください。認識するとキューブが重なって表示されます。
+
+### スマートフォンで試す・公開する
+
+カメラ API は Secure Context を要求します。`localhost` は例外として HTTP でも動きますが、
+スマートフォンの実機で開くには HTTPS が必要です。ビルド工程を持たない静的サイトなので、
+リポジトリをそのまま配信できる場所であればどこでも動きます。
+
+- **GitHub Pages** — このリポジトリをそのまま公開できます。Settings > Pages でブランチと
+  ルートディレクトリを指定するだけです
+- **Netlify** — ビルドコマンドは不要で、publish directory をリポジトリルート（`.`）に
+  設定します。ディレクトリをドラッグ＆ドロップするだけでも配信できます
+- **自前のサーバー** — 証明書を用意して静的配信すれば動きます
+- **一時的な実機確認** — ローカルサーバーを ngrok などのトンネル経由で HTTPS 公開する方法
+  も使えます
+
+WebAssembly はエンジンの JS 内にインライン化されているため、`.wasm` の MIME タイプ設定は
+不要です。特別なサーバー設定は要りません。
+
+いずれの方法でも、`external/xr/` を配信した時点で再配布に該当します。後述の
+「配布時のライセンス表示」を満たしてください。
 
 ## ターゲット画像
 
-Node.js を用意し、プロジェクトルートで Image Target CLI を実行します。
+**動作確認にはリポジトリ同梱の画像がそのまま使えます。** 学習済みデータ
+（`image-targets/my-target.json` と関連画像）を含めてあるので、生成作業は不要です。
+`image-targets/marker.png` を印刷するか、PC やタブレットの画面に表示してカメラを向けて
+ください。
+
+### 自分の画像に差し替える
+
+別の画像をターゲットにする場合は、Image Target CLI で学習済みデータを生成します。Node.js
+が必要です（内部で `sharp` を使うため、初回はネイティブモジュールの取得が走ります）。
+プロジェクトルートで実行してください。
 
 ```bash
 npx @8thwall/image-target-cli@latest
 ```
 
-現在のサンプルは `image-targets/my-target.json` を読み込みます。別の名前で生成した場合は
-`js/app.js` の `TARGET_JSON` を変更してください。JSON と CLI が生成する画像ファイルは、
-相対パスを保ったまま一緒に配信します。
+実行するコマンドはこれだけです。オプションや引数は無く、起動後に対話形式で次の順に聞かれ
+ます。
 
-## MIT 版エンジン
+| プロンプト | 入力内容 |
+|---|---|
+| `Enter the path to the image file:` | 元画像のパス |
+| `Select the image type:` | `flat`（既定）/ `cylinder` / `cone` |
+| `Use default crop? [Y/n]` | `Y` で中央を自動クロップ |
+| （`n` の場合）向き・top・left・width | 向きは landscape / portrait。height は 4:3 比から自動計算されます |
+| `Enter the output folder:` | 出力先。このリポジトリなら `image-targets` |
+| `Enter a name for the image target:` | 出力ファイル名の接頭辞。同梱サンプルは `my-target` |
 
-このリポジトリは Distributed Engine Binary と `@8thwall/engine-binary` を使用しません。
+生成されるのは JSON、原画像、クロップ画像、サムネイル（263x350）、輝度画像（480x640）です。
+
+同名のファイルが既にあると `File already exists, overwrite is disabled` で停止します。
+上書きする場合は環境変数を付けて実行してください。
+
+```bash
+OVERWRITE_FILES=true npx @8thwall/image-target-cli@latest
+```
+
+生成後、`js/app.js` の `TARGET_JSON` は `image-targets/my-target.json` を指しているので、
+別の名前で生成した場合はここを変更してください。JSON と画像ファイルは、相対パスを保った
+まま一緒に配信します。
+
+## エンジンのビルド元
+
 `external/xr/` の成果物は、次の MIT ライセンス版ソースからビルドしたものです。
 
-- Source: <https://github.com/8thwall/8thwall>
-- Commit: `462ea2f73accb9ecd1bb629d9877300438ba718f`
-- Bazel: `7.2.1`
-- Config: `wasmreleasesimd`
+| 項目 | 値 |
+|---|---|
+| Source | <https://github.com/8thwall/8thwall> |
+| Commit | `462ea2f73accb9ecd1bb629d9877300438ba718f` |
+| Bazel | `7.2.1` |
+| Config | `wasmreleasesimd` |
+| Target | `//reality/app/xr/js:bundle` |
 
-公式の bundle ターゲットをビルドします。
+### 再ビルドの手順
 
 ```bash
 git clone https://github.com/8thwall/8thwall.git
 cd 8thwall
 git checkout 462ea2f73accb9ecd1bb629d9877300438ba718f
+git apply /path/to/8thwall-template/external/xr/patches/0001-honor-disableWorldTracking-in-configure.patch
 python3 -m pip install -r requirements.txt
 npx --yes @bazel/bazelisk build --config=wasmreleasesimd //reality/app/xr/js:bundle
 ```
 
 `bazel-bin/reality/app/xr/js/bundle.zip` から `xr.js` と `xr-tracking.js` だけを取り出し、
 ソースの `resources/powered-by.svg`、`LICENSE` とともに `external/xr/` へ配置します。
-Face・Sky・Media Recorder などの未使用成果物は同梱しません。
 
-`data-preload-chunks="slam"` は互換チャンク名で、ローカルの `xr-tracking.js` を読み込む
-ために必要です。
+### 適用しているパッチ
 
-固定コミットでは `XrController.configure()` が `disableWorldTracking` を反映しないため、
-Image Tracking 専用モードを有効にする最小パッチを適用して `xr-tracking.js` を再ビルド
-しています。本来は呼び出し側の `configure({disableWorldTracking: true})` だけで完結する
-設定ですが、このコミットでは設定を受け取る処理が欠落しています。
+上流の `XrController.configure()` は `disableWorldTracking` を受け取る処理を欠いており、
+`configure({disableWorldTracking: true})` が無言で無視されます。SLAM の無いこのエンジンでは
+このオプションが唯一成立する設定なので、代入 1 箇所を足す最小パッチを当てて再ビルドして
+います。
 
-パッチは適用可能な形で
-`external/xr/patches/0001-honor-disableWorldTracking-in-configure.patch`
-に置いてあります。上流のクローンのルートで `git apply` してからビルドしてください。
-この不具合は上流の main（`f6bb5c24`、2026-08-23 時点）でも未修正で、
-`tracking-controller.ts` は固定コミットとバイト同一のため、どちらにも適用できます。
-詳細は `external/xr/BUILD-SOURCE.md` を参照してください。
+パッチは `external/xr/patches/` に `git apply` 可能な形で置いてあります。この不具合は上流の
+main（`f6bb5c24`、2026-08-23 時点）でも未修正で、`tracking-controller.ts` は固定コミットと
+バイト同一のため、どちらのコミットにも適用できます。
+
+ビルド来歴と成果物のハッシュは `external/xr/BUILD-SOURCE.md` に記録しています。
+
+### 補足
+
+`index.html` の `data-preload-chunks="slam"` は互換のために残っているチャンク名で、実際に
+読み込まれるのはローカルの `xr-tracking.js`（Image Tracking 実装）です。
 
 ## 配布時のライセンス表示
 
@@ -81,6 +164,6 @@ Image Tracking 専用モードを有効にする最小パッチを適用して `
 
 ## 技術スタック
 
-- 8th Wall Engine（MIT 版、リポジトリ内に同梱）
+- 8th Wall Engine（MIT 版、`external/xr/` に同梱）
 - Three.js r128（CDN）
 - バニラ JavaScript
