@@ -118,7 +118,7 @@ The artifacts in `external/xr/` were built from the MIT-licensed sources below.
 | | |
 |---|---|
 | Source | <https://github.com/8thwall/8thwall> |
-| Commit | `462ea2f73accb9ecd1bb629d9877300438ba718f` |
+| Commit | `6b497e89cd68fe0ef564695a9bc38bd573d26de9` |
 | Bazel | `7.2.1` |
 | Config | `wasmreleasesimd` |
 | Target | `//reality/app/xr/js:bundle` |
@@ -128,8 +128,7 @@ The artifacts in `external/xr/` were built from the MIT-licensed sources below.
 ```bash
 git clone https://github.com/8thwall/8thwall.git
 cd 8thwall
-git checkout 462ea2f73accb9ecd1bb629d9877300438ba718f
-git apply /path/to/8thwall-template/external/xr/patches/0001-honor-disableWorldTracking-in-configure.patch
+git checkout 6b497e89cd68fe0ef564695a9bc38bd573d26de9
 python3 -m pip install -r requirements.txt
 npx --yes @bazel/bazelisk build --config=wasmreleasesimd //reality/app/xr/js:bundle
 ```
@@ -138,17 +137,14 @@ Take only `xr.js` and `xr-tracking.js` out of
 `bazel-bin/reality/app/xr/js/bundle.zip` and place them in `external/xr/` along with
 `resources/powered-by.svg` and `LICENSE` from the sources.
 
-### The patch we apply
+### No local patches
 
-Upstream's `XrController.configure()` never reads the `disableWorldTracking`
-argument, so `configure({disableWorldTracking: true})` is silently ignored. On an
-engine without SLAM that option is the only configuration that can work, so we apply
-a minimal patch adding the single missing assignment and rebuild.
-
-The patch lives in `external/xr/patches/` in a form `git apply` accepts. The bug is
-still unfixed on upstream `main` (`f6bb5c24`, as of 2026-08-23), and
-`tracking-controller.ts` is byte-identical to the pinned commit, so the patch applies
-to either one.
+Nothing here is modified. Earlier revisions of this repository carried a patch,
+because upstream's `XrController.configure()` ignored the `disableWorldTracking`
+argument and that option is the only workable configuration on an engine without
+SLAM. That fix is now upstream
+([#263](https://github.com/8thwall/8thwall/pull/263)), so these artifacts are a
+plain build of the pinned commit.
 
 Build provenance and artifact hashes are recorded in `external/xr/BUILD-SOURCE.md`.
 

@@ -113,7 +113,7 @@ OVERWRITE_FILES=true npx @8thwall/image-target-cli@latest
 | 項目 | 値 |
 |---|---|
 | Source | <https://github.com/8thwall/8thwall> |
-| Commit | `462ea2f73accb9ecd1bb629d9877300438ba718f` |
+| Commit | `6b497e89cd68fe0ef564695a9bc38bd573d26de9` |
 | Bazel | `7.2.1` |
 | Config | `wasmreleasesimd` |
 | Target | `//reality/app/xr/js:bundle` |
@@ -123,8 +123,7 @@ OVERWRITE_FILES=true npx @8thwall/image-target-cli@latest
 ```bash
 git clone https://github.com/8thwall/8thwall.git
 cd 8thwall
-git checkout 462ea2f73accb9ecd1bb629d9877300438ba718f
-git apply /path/to/8thwall-template/external/xr/patches/0001-honor-disableWorldTracking-in-configure.patch
+git checkout 6b497e89cd68fe0ef564695a9bc38bd573d26de9
 python3 -m pip install -r requirements.txt
 npx --yes @bazel/bazelisk build --config=wasmreleasesimd //reality/app/xr/js:bundle
 ```
@@ -132,16 +131,13 @@ npx --yes @bazel/bazelisk build --config=wasmreleasesimd //reality/app/xr/js:bun
 `bazel-bin/reality/app/xr/js/bundle.zip` から `xr.js` と `xr-tracking.js` だけを取り出し、
 ソースの `resources/powered-by.svg`、`LICENSE` とともに `external/xr/` へ配置します。
 
-### 適用しているパッチ
+### パッチは当てていません
 
-上流の `XrController.configure()` は `disableWorldTracking` を受け取る処理を欠いており、
-`configure({disableWorldTracking: true})` が無言で無視されます。SLAM の無いこのエンジンでは
-このオプションが唯一成立する設定なので、代入 1 箇所を足す最小パッチを当てて再ビルドして
-います。
-
-パッチは `external/xr/patches/` に `git apply` 可能な形で置いてあります。この不具合は上流の
-main（`f6bb5c24`、2026-08-23 時点）でも未修正で、`tracking-controller.ts` は固定コミットと
-バイト同一のため、どちらのコミットにも適用できます。
+このリポジトリの成果物に独自の改変はありません。以前は上流の
+`XrController.configure()` が `disableWorldTracking` を受け取らず、SLAM の無いこの
+エンジンでは唯一成立する設定が使えなかったため、パッチを当てていました。この修正は
+[#263](https://github.com/8thwall/8thwall/pull/263) で上流に取り込まれたので、現在は
+固定コミットをそのままビルドしたものです。
 
 ビルド来歴と成果物のハッシュは `external/xr/BUILD-SOURCE.md` に記録しています。
 
