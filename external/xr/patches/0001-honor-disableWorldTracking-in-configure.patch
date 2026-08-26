@@ -1,0 +1,64 @@
+Subject: [PATCH] Honor the disableWorldTracking option in XrController.configure()
+
+XrController declares a module-level `disableWorldTracking_` flag and checks it
+in several places, but the public `configure()` entry point never assigns it
+from its argument. As a result `XR8.XrController.configure({disableWorldTracking:
+true})` is silently ignored.
+
+With the flag stuck at its `false` default, tracking-controller.ts requires
+world tracking unconditionally and rejects camera sessions on non-mobile
+devices:
+
+    [XR] Reality with camera on non-mobile devices requires disableWorldTracking
+
+The open-source engine ships with SLAM removed, so world tracking is not
+available at all and Image Tracking cannot run without this option. This patch
+adds the missing option declaration and the assignment in `configure()`.
+
+Upstream status
+---------------
+Unfixed as of main f6bb5c2487a157339200a2310d19f034d8bd84ba (2026-08-23).
+`reality/app/xr/js/src/tracking-controller.ts` is byte-identical
+(sha256 afeb9c060615f6f9b39a6390c0fdb09f820409fa19016d2fdc3e1bfc6d6acd03)
+between that commit and the commit this repository builds from, so the patch
+applies cleanly to either.
+
+Verified against
+----------------
+  https://github.com/8thwall/8thwall
+  462ea2f73accb9ecd1bb629d9877300438ba718f  (build commit, see ../BUILD-SOURCE.md)
+  f6bb5c2487a157339200a2310d19f034d8bd84ba  (main @ 2026-08-23)
+
+How to apply
+------------
+From the root of an 8thwall checkout, before running the Bazel build:
+
+  git apply /path/to/external/xr/patches/0001-honor-disableWorldTracking-in-configure.patch
+  npx --yes @bazel/bazelisk build --config=wasmreleasesimd //reality/app/xr/js:bundle
+
+---
+diff --git a/reality/app/xr/js/src/tracking-controller.ts b/reality/app/xr/js/src/tracking-controller.ts
+--- a/reality/app/xr/js/src/tracking-controller.ts
++++ b/reality/app/xr/js/src/tracking-controller.ts
+@@ -199,8 +199,9 @@ const createAuthTokenSubscription = (sccPromise_: Promise<XrTrackingccModule>) =
+   }
+ }
+ 
+ interface TrackingControllerConfig {
++  disableWorldTracking?: boolean
+   enableLighting?: boolean
+   imageTargets?: string[]
+   imageTargetData?: ImageTargetData[]
+   leftHandedAxes?: boolean
+@@ -1297,8 +1298,11 @@ const XrControllerFactory = singleton((
+   const configure = (args: TrackingControllerConfig) => {
+     if (!args) {
+       return
+     }
++    if (args.disableWorldTracking !== undefined) {
++      disableWorldTracking_ = !!args.disableWorldTracking
++    }
+     if (args.enableLighting !== undefined) {
+       enableLighting_ = !!args.enableLighting
+     }
+     if (args.leftHandedAxes !== undefined) {

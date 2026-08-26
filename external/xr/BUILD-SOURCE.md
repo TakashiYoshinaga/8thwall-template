@@ -24,21 +24,34 @@ public `XrController.configure()` implementation does not apply the
 `disableWorldTracking` option. Without this option, camera sessions on desktop
 are rejected and Image Tracking cannot run without SLAM.
 
-The following minimal change was applied to
-`reality/app/xr/js/src/tracking-controller.ts` before rebuilding
-`//reality/app/xr/js:xr-tracking`:
+The change is kept as an applicable patch file:
 
-```diff
- interface TrackingControllerConfig {
-+  disableWorldTracking?: boolean
- }
+    patches/0001-honor-disableWorldTracking-in-configure.patch
 
- const configure = (args: TrackingControllerConfig) => {
-+  if (args.disableWorldTracking !== undefined) {
-+    disableWorldTracking_ = !!args.disableWorldTracking
-+  }
- }
+Apply it from the root of an 8thwall checkout before building:
+
+```bash
+git apply /path/to/external/xr/patches/0001-honor-disableWorldTracking-in-configure.patch
+npx --yes @bazel/bazelisk build --config=wasmreleasesimd //reality/app/xr/js:bundle
 ```
+
+It touches `reality/app/xr/js/src/tracking-controller.ts` only, adding the
+option to `TrackingControllerConfig` and the corresponding assignment at the
+top of `configure()`.
+
+### Upstream status
+
+Still unfixed on `main` as of `f6bb5c2487a157339200a2310d19f034d8bd84ba`
+(2026-08-23). `tracking-controller.ts` is byte-identical between that commit
+and the build commit above:
+
+```text
+afeb9c060615f6f9b39a6390c0fdb09f820409fa19016d2fdc3e1bfc6d6acd03  reality/app/xr/js/src/tracking-controller.ts
+```
+
+The patch therefore applies cleanly to either commit. Re-check this before
+moving to a newer upstream commit; if `configure()` gains the assignment
+upstream, the patch and this section can be dropped.
 
 ## SHA-256
 
