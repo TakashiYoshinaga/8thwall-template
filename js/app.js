@@ -9,7 +9,7 @@ const TARGET_JSON = 'image-targets/my-target.json'
   function showError(error) {
     const message = error && error.message ? error.message : String(error)
     console.error(error)
-    statusEl.textContent = `エラー: ${message}`
+    statusEl.textContent = `Error: ${message}`
   }
 
   function updateTarget(detail) {
@@ -74,15 +74,15 @@ const TARGET_JSON = 'image-targets/my-target.json'
 
     onCameraStatusChange: ({status, reason}) => {
       if (status === 'requesting') {
-        statusEl.textContent = 'カメラの使用を許可してください...'
+        statusEl.textContent = 'Please allow camera access...'
       } else if (status === 'hasVideo') {
-        statusEl.textContent = 'ターゲット画像を読み込み中...'
+        statusEl.textContent = 'Loading target image...'
       } else if (status === 'failed') {
         const message = reason === 'DENY_CAMERA'
-          ? 'カメラの使用が許可されていません'
+          ? 'Camera access was denied'
           : reason === 'NO_CAMERA'
-            ? '利用できるカメラが見つかりません'
-            : `カメラの起動に失敗しました (${reason || 'UNKNOWN'})`
+            ? 'No usable camera was found'
+            : `Failed to start the camera (${reason || 'UNKNOWN'})`
         showError(message)
       }
     },
@@ -93,14 +93,14 @@ const TARGET_JSON = 'image-targets/my-target.json'
       {
         event: 'reality.imagescanning',
         process: () => {
-          statusEl.textContent = 'ターゲット画像を探しています...'
+          statusEl.textContent = 'Looking for the target image...'
         },
       },
       {
         event: 'reality.imagefound',
         process: ({detail}) => {
           updateTarget(detail)
-          statusEl.textContent = `認識しました: ${detail.name}`
+          statusEl.textContent = `Found: ${detail.name}`
         },
       },
       {
@@ -111,7 +111,7 @@ const TARGET_JSON = 'image-targets/my-target.json'
         event: 'reality.imagelost',
         process: () => {
           if (targetAnchor) targetAnchor.visible = false
-          statusEl.textContent = 'ターゲット画像を探しています...'
+          statusEl.textContent = 'Looking for the target image...'
         },
       },
     ],
@@ -120,11 +120,11 @@ const TARGET_JSON = 'image-targets/my-target.json'
   async function onXrLoaded() {
     try {
       if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
-        throw new Error('カメラを使うには HTTPS または localhost で開いてください')
+        throw new Error('Open this page over HTTPS or on localhost to use the camera')
       }
 
       const res = await fetch(TARGET_JSON)
-      if (!res.ok) throw new Error(`${TARGET_JSON} の取得に失敗 (HTTP ${res.status})`)
+      if (!res.ok) throw new Error(`Failed to fetch ${TARGET_JSON} (HTTP ${res.status})`)
       const targetJson = await res.json()
 
       XR8.XrController.configure({
@@ -140,7 +140,7 @@ const TARGET_JSON = 'image-targets/my-target.json'
         imageTrackingModule,
       ])
 
-      statusEl.textContent = 'カメラを起動中...'
+      statusEl.textContent = 'Starting the camera...'
       syncCanvasSize()
       XR8.run({
         canvas,

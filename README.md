@@ -1,114 +1,121 @@
 # WebAR Image Tracking
 
-MIT ライセンス版 8th Wall Engine だけで動く、最小構成の Image Tracking サンプルです。
-検出した平面ターゲットの上に Three.js のキューブを表示します。
+A minimal Image Tracking sample that runs on nothing but the MIT-licensed 8th Wall
+Engine. It renders a Three.js cube on top of a detected planar target.
 
-## このリポジトリについて
+日本語版は [README.ja.md](README.ja.md) にあります。
 
-8th Wall は 2026 年にエンジン本体を MIT ライセンスで公開しましたが、SLAM などの一部機能は
-プロプライエタリなバイナリとして別配布されています。このリポジトリは**その非 MIT 部分を
-一切使わず、MIT ソースをビルドした成果物のみで Image Tracking を成立させた構成**です。
+## About this repository
 
-- Distributed Engine Binary（`@8thwall/engine-binary`）を使いません
-- CDN からエンジンを読み込みません。`external/xr/` に同梱したものだけを使います
-- エンジンに関しては外部サービスへの依存がゼロです（ただし Three.js は CDN から読み込んで
-  いるため、完全にオフラインで動かすには Three.js もローカルに配置してください）
+8th Wall released its engine under the MIT License in 2026, but some features,
+SLAM among them, remain proprietary and are shipped separately as a binary. This
+repository is a build that **avoids that non-MIT half entirely and gets Image
+Tracking working from MIT sources alone**.
 
-### できること・できないこと
+- No Distributed Engine Binary, no `@8thwall/engine-binary`
+- The engine is not pulled from a CDN. Only the copy vendored in `external/xr/` is used
+- So the engine itself has zero external service dependencies (Three.js does come
+  from a CDN, so place it locally too if you need to run fully offline)
 
-| 機能 | 状態 |
+### What works and what does not
+
+| Feature | Status |
 |---|---|
-| Image Target（マーカー）トラッキング | 動作します |
-| World Tracking / SLAM | 使えません。MIT ソースから削除済みで、非 MIT バイナリが必要です |
-| Face Effects / Sky Effects / 録画 | エンジン内にコードはありますが成果物を同梱していません（下記参照） |
-| VPS / Hand Tracking | 非 MIT バイナリにも含まれません |
+| Image Target tracking | Works |
+| World Tracking / SLAM | Unavailable. Removed from the MIT sources; needs the non-MIT binary |
+| Face Effects / Sky Effects / recording | The code is in the engine, but the artifacts are not bundled (see below) |
+| VPS / Hand Tracking | Not even in the non-MIT binary |
 
-SLAM が無いため、`js/app.js` では `configure({disableWorldTracking: true})` が必須です。
+Because there is no SLAM, `js/app.js` must pass
+`configure({disableWorldTracking: true})`.
 
-Face・Sky・Media Recorder は、同じビルドの `bundle.zip` から不足ファイル 9 件をコピーすれば
-有効化できます（`xr-face.js`、`.tflite` モデル、各ワーカー等）。ライセンス上の追加制約は
-ありません。
+Face, Sky and Media Recorder can be enabled by copying the 9 missing files out of
+the same build's `bundle.zip` (`xr-face.js`, the `.tflite` models, the workers, and
+so on). No extra licensing obligations come with them.
 
-## クイックスタート
+## Quick start
 
-1. 静的 HTTP サーバーでプロジェクトルートを配信します。
+1. Serve the project root with any static HTTP server.
 
    ```bash
    python3 -m http.server 8000
    ```
 
-2. PC では `http://localhost:8000` を開きます。
+2. Open `http://localhost:8000` on your computer.
 
-3. カメラを許可したら、`image-targets/marker.png` を印刷するか別の画面に表示して、
-   カメラを向けてください。認識するとキューブが重なって表示されます。
+3. Once you grant camera access, print `image-targets/marker.png` or show it on
+   another screen and point the camera at it. A cube appears on top of it when the
+   target is recognized.
 
-### スマートフォンで試す・公開する
+### Trying it on a phone, and publishing
 
-カメラ API は Secure Context を要求します。`localhost` は例外として HTTP でも動きますが、
-スマートフォンの実機で開くには HTTPS が必要です。ビルド工程を持たない静的サイトなので、
-リポジトリをそのまま配信できる場所であればどこでも動きます。
+The camera API requires a Secure Context. `localhost` is exempt and works over
+plain HTTP, but opening the page on a real phone needs HTTPS. There is no build
+step, so anywhere that can serve the repository as-is will work.
 
-- **GitHub Pages** — このリポジトリをそのまま公開できます。Settings > Pages でブランチと
-  ルートディレクトリを指定するだけです
-- **Netlify** — ビルドコマンドは不要で、publish directory をリポジトリルート（`.`）に
-  設定します。ディレクトリをドラッグ＆ドロップするだけでも配信できます
-- **自前のサーバー** — 証明書を用意して静的配信すれば動きます
-- **一時的な実機確認** — ローカルサーバーを ngrok などのトンネル経由で HTTPS 公開する方法
-  も使えます
+- **GitHub Pages** — publish this repository directly. Pick the branch and the
+  root directory under Settings > Pages
+- **Netlify** — no build command; set the publish directory to the repository root
+  (`.`). Dragging and dropping the directory works too
+- **Your own server** — serve it statically with a certificate
+- **Quick device checks** — expose your local server over HTTPS with a tunnel such
+  as ngrok
 
-WebAssembly はエンジンの JS 内にインライン化されているため、`.wasm` の MIME タイプ設定は
-不要です。特別なサーバー設定は要りません。
+WebAssembly is inlined into the engine's JavaScript, so no `.wasm` MIME type
+configuration is needed. No special server setup at all.
 
-いずれの方法でも、`external/xr/` を配信した時点で再配布に該当します。後述の
-「配布時のライセンス表示」を満たしてください。
+Note that serving `external/xr/` counts as redistribution. See
+[License notices when distributing](#license-notices-when-distributing) below.
 
-## ターゲット画像
+## Target images
 
-**動作確認にはリポジトリ同梱の画像がそのまま使えます。** 学習済みデータ
-（`image-targets/my-target.json` と関連画像）を含めてあるので、生成作業は不要です。
-`image-targets/marker.png` を印刷するか、PC やタブレットの画面に表示してカメラを向けて
-ください。
+**The bundled image works as-is for testing.** The trained data
+(`image-targets/my-target.json` and its images) is included, so there is nothing to
+generate. Print `image-targets/marker.png` or display it on a monitor or tablet and
+point the camera at it.
 
-### 自分の画像に差し替える
+### Using your own image
 
-別の画像をターゲットにする場合は、Image Target CLI で学習済みデータを生成します。Node.js
-が必要です（内部で `sharp` を使うため、初回はネイティブモジュールの取得が走ります）。
-プロジェクトルートで実行してください。
+To track a different image, generate trained data with the Image Target CLI. Node.js
+is required (it uses `sharp` internally, so the first run fetches a native module).
+Run it from the project root.
 
 ```bash
 npx @8thwall/image-target-cli@latest
 ```
 
-実行するコマンドはこれだけです。オプションや引数は無く、起動後に対話形式で次の順に聞かれ
-ます。
+That single command is all there is. It takes no flags or arguments; once it starts
+it asks the following, in order.
 
-| プロンプト | 入力内容 |
+| Prompt | What to enter |
 |---|---|
-| `Enter the path to the image file:` | 元画像のパス |
-| `Select the image type:` | `flat`（既定）/ `cylinder` / `cone` |
-| `Use default crop? [Y/n]` | `Y` で中央を自動クロップ |
-| （`n` の場合）向き・top・left・width | 向きは landscape / portrait。height は 4:3 比から自動計算されます |
-| `Enter the output folder:` | 出力先。このリポジトリなら `image-targets` |
-| `Enter a name for the image target:` | 出力ファイル名の接頭辞。同梱サンプルは `my-target` |
+| `Enter the path to the image file:` | Path to the source image |
+| `Select the image type:` | `flat` (default) / `cylinder` / `cone` |
+| `Use default crop? [Y/n]` | `Y` centers the crop automatically |
+| (if `n`) orientation, top, left, width | Orientation is landscape or portrait. Height is derived from a 4:3 ratio |
+| `Enter the output folder:` | Output directory. `image-targets` for this repository |
+| `Enter a name for the image target:` | Prefix for the output files. The bundled sample uses `my-target` |
 
-生成されるのは JSON、原画像、クロップ画像、サムネイル（263x350）、輝度画像（480x640）です。
+It writes a JSON file plus the original, cropped, thumbnail (263x350) and luminance
+(480x640) images.
 
-同名のファイルが既にあると `File already exists, overwrite is disabled` で停止します。
-上書きする場合は環境変数を付けて実行してください。
+If files with the same name already exist it stops with
+`File already exists, overwrite is disabled`. Set the environment variable to
+overwrite them.
 
 ```bash
 OVERWRITE_FILES=true npx @8thwall/image-target-cli@latest
 ```
 
-生成後、`js/app.js` の `TARGET_JSON` は `image-targets/my-target.json` を指しているので、
-別の名前で生成した場合はここを変更してください。JSON と画像ファイルは、相対パスを保った
-まま一緒に配信します。
+`TARGET_JSON` in `js/app.js` points at `image-targets/my-target.json`, so change it
+if you generated your data under a different name. Serve the JSON and the images
+together, keeping their relative paths intact.
 
-## エンジンのビルド元
+## How the engine was built
 
-`external/xr/` の成果物は、次の MIT ライセンス版ソースからビルドしたものです。
+The artifacts in `external/xr/` were built from the MIT-licensed sources below.
 
-| 項目 | 値 |
+| | |
 |---|---|
 | Source | <https://github.com/8thwall/8thwall> |
 | Commit | `462ea2f73accb9ecd1bb629d9877300438ba718f` |
@@ -116,7 +123,7 @@ OVERWRITE_FILES=true npx @8thwall/image-target-cli@latest
 | Config | `wasmreleasesimd` |
 | Target | `//reality/app/xr/js:bundle` |
 
-### 再ビルドの手順
+### Rebuilding
 
 ```bash
 git clone https://github.com/8thwall/8thwall.git
@@ -127,43 +134,48 @@ python3 -m pip install -r requirements.txt
 npx --yes @bazel/bazelisk build --config=wasmreleasesimd //reality/app/xr/js:bundle
 ```
 
-`bazel-bin/reality/app/xr/js/bundle.zip` から `xr.js` と `xr-tracking.js` だけを取り出し、
-ソースの `resources/powered-by.svg`、`LICENSE` とともに `external/xr/` へ配置します。
+Take only `xr.js` and `xr-tracking.js` out of
+`bazel-bin/reality/app/xr/js/bundle.zip` and place them in `external/xr/` along with
+`resources/powered-by.svg` and `LICENSE` from the sources.
 
-### 適用しているパッチ
+### The patch we apply
 
-上流の `XrController.configure()` は `disableWorldTracking` を受け取る処理を欠いており、
-`configure({disableWorldTracking: true})` が無言で無視されます。SLAM の無いこのエンジンでは
-このオプションが唯一成立する設定なので、代入 1 箇所を足す最小パッチを当てて再ビルドして
-います。
+Upstream's `XrController.configure()` never reads the `disableWorldTracking`
+argument, so `configure({disableWorldTracking: true})` is silently ignored. On an
+engine without SLAM that option is the only configuration that can work, so we apply
+a minimal patch adding the single missing assignment and rebuild.
 
-パッチは `external/xr/patches/` に `git apply` 可能な形で置いてあります。この不具合は上流の
-main（`f6bb5c24`、2026-08-23 時点）でも未修正で、`tracking-controller.ts` は固定コミットと
-バイト同一のため、どちらのコミットにも適用できます。
+The patch lives in `external/xr/patches/` in a form `git apply` accepts. The bug is
+still unfixed on upstream `main` (`f6bb5c24`, as of 2026-08-23), and
+`tracking-controller.ts` is byte-identical to the pinned commit, so the patch applies
+to either one.
 
-ビルド来歴と成果物のハッシュは `external/xr/BUILD-SOURCE.md` に記録しています。
+Build provenance and artifact hashes are recorded in `external/xr/BUILD-SOURCE.md`.
 
-### 補足
+### A note on chunk names
 
-`index.html` の `data-preload-chunks="slam"` は互換のために残っているチャンク名で、実際に
-読み込まれるのはローカルの `xr-tracking.js`（Image Tracking 実装）です。
+`data-preload-chunks="slam"` in `index.html` is a chunk name kept for compatibility.
+What actually loads is the local `xr-tracking.js`, which is the Image Tracking
+implementation.
 
-## 配布時のライセンス表示
+## License notices when distributing
 
-`external/xr/` を配信する際は、次の 2 ファイルを必ず一緒に配置してください。バンドル
-自体には著作権バナーが含まれないため、この 2 ファイルが唯一の告知手段になります。
+When you serve `external/xr/`, always ship these two files alongside it. The bundles
+carry no copyright banner of their own, so these files are the only notice.
 
-- `external/xr/LICENSE` — 8th Wall Engine 本体（MIT）
-- `external/xr/THIRD-PARTY-NOTICES` — バンドルに組み込まれたサードパーティ 9 件
+- `external/xr/LICENSE` — the 8th Wall Engine itself (MIT)
+- `external/xr/THIRD-PARTY-NOTICES` — the 9 third-party components compiled into the
+  bundles
 
-サードパーティのうち 51Degrees Renderer は MPL-2.0 です。未改変のため、ソース入手先を
-明示する以外の義務はなく、告知文は `THIRD-PARTY-NOTICES` に記載済みです。
+One of those components, 51Degrees Renderer, is MPL-2.0. It is unmodified, so the
+only obligation is to state where the source can be obtained, and
+`THIRD-PARTY-NOTICES` already does that.
 
-「8th Wall」の名称やロゴを表示する場合は、MIT が商標権を含まないため
-<https://8thwall.org/docs/open-source> のガイドラインを確認してください。
+The MIT License does not grant trademark rights, so if you display the "8th Wall"
+name or logo, check the guidelines at <https://8thwall.org/docs/open-source>.
 
-## 技術スタック
+## Stack
 
-- 8th Wall Engine（MIT 版、`external/xr/` に同梱）
-- Three.js r128（CDN）
-- バニラ JavaScript
+- 8th Wall Engine (MIT build, vendored in `external/xr/`)
+- Three.js r128 (CDN)
+- Vanilla JavaScript
